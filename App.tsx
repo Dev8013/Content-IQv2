@@ -10,6 +10,11 @@ import { PuterStorageService } from './services/puterStorageService';
 declare const puter: any;
 
 const App: React.FC = () => {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('ciq_theme');
+    return saved ? saved === 'dark' : true;
+  });
+
   const [user, setUser] = useState<User>({
     username: '',
     isLoggedIn: false
@@ -18,11 +23,32 @@ const App: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [resetCounter, setResetCounter] = useState(0);
 
+  const toggleTheme = () => {
+    setIsDarkMode(prev => {
+      const next = !prev;
+      localStorage.setItem('ciq_theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const body = document.body;
+    if (isDarkMode) {
+      body.classList.add('dark');
+      body.classList.remove('light', 'bg-slate-50', 'text-slate-900');
+      body.classList.add('bg-slate-950', 'text-slate-200');
+    } else {
+      body.classList.add('light');
+      body.classList.remove('dark', 'bg-slate-950', 'text-slate-200');
+      body.classList.add('bg-slate-50', 'text-slate-900');
+    }
+  }, [isDarkMode]);
+
   const syncFromPuter = async () => {
     setIsSyncing(true);
     try {
-      const driveData = await PuterStorageService.getHistory();
-      setHistory(driveData);
+      const data = await PuterStorageService.getHistory();
+      setHistory(data);
     } catch (e) {
       console.warn("Puter Cloud sync error:", e);
     } finally {
@@ -84,12 +110,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className={`min-h-screen flex flex-col relative transition-colors duration-500`}>
       <Header 
         user={user} 
         onLogin={handleLogin} 
         onLogout={handleLogout} 
         isSyncing={isSyncing}
+        isDarkMode={isDarkMode}
+        onToggleTheme={toggleTheme}
         onNavigate={(id) => {
           const el = document.getElementById(id);
           if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -101,22 +129,24 @@ const App: React.FC = () => {
         {!user.isLoggedIn ? (
           <Hero onStartClick={handleLogin} />
         ) : (
-          <section id="workspace-section" className="py-24 px-6 max-w-[1440px] mx-auto">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-6 animate-in fade-in slide-in-from-top-4 duration-700">
-              <div>
-                <h2 className="text-5xl font-black uppercase tracking-tighter">Neural <span className="text-violet-500">Suite</span></h2>
-                <div className="flex items-center gap-3 mt-2">
-                  <div className={`w-2 h-2 rounded-full ${isSyncing ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'}`}></div>
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                    {isSyncing ? 'Syncing Puter Buffer...' : 'Puter Cloud Status: Online'}
+          <section id="workspace-section" className="py-32 px-6 max-w-[1400px] mx-auto">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-16 gap-6">
+              <div className="animate-in fade-in slide-in-from-left-4 duration-700">
+                <h2 className="text-5xl md:text-6xl font-heading font-extrabold tracking-tight dark:text-white text-slate-900">
+                  Neural <span className="text-violet-500">Suite</span>
+                </h2>
+                <div className="flex items-center gap-3 mt-4">
+                  <div className={`w-2.5 h-2.5 rounded-full ${isSyncing ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]'}`}></div>
+                  <span className="text-xs font-semibold dark:text-slate-400 text-slate-500 uppercase tracking-widest">
+                    {isSyncing ? 'Synchronizing Cloud Buffer...' : 'Puter Cloud Link: Secure'}
                   </span>
                 </div>
               </div>
               
-              <div className="flex gap-4">
-                 <div className="px-6 py-3 glass rounded-2xl border border-white/5 flex flex-col items-center min-w-[120px]">
-                    <span className="text-[9px] font-black text-slate-500 uppercase mb-1">Archive Size</span>
-                    <span className="text-xl font-black">{history.length} <span className="text-xs text-slate-600">/ 50</span></span>
+              <div className="flex gap-4 animate-in fade-in slide-in-from-right-4 duration-700">
+                 <div className="px-8 py-4 glass rounded-[2rem] flex flex-col items-center min-w-[140px]">
+                    <span className="text-[10px] font-bold dark:text-slate-500 text-slate-400 uppercase tracking-widest mb-1">Cache Utilization</span>
+                    <span className="text-2xl font-heading font-extrabold dark:text-white text-slate-900">{history.length} <span className="text-sm text-slate-400 font-medium">/ 50</span></span>
                  </div>
               </div>
             </div>
@@ -126,8 +156,10 @@ const App: React.FC = () => {
               onResultSaved={saveToHistory} 
               history={history} 
               onClearHistory={async () => {
-                setHistory([]);
-                await PuterStorageService.clearHistory();
+                if (confirm('Are you sure you want to purge the neural archive?')) {
+                  setHistory([]);
+                  await PuterStorageService.clearHistory();
+                }
               }}
             />
           </section>
