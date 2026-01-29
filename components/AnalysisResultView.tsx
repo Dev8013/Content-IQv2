@@ -16,7 +16,7 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
         <h2 className="text-4xl font-black uppercase tracking-tighter italic">Analysis <span className="text-violet-500">Report</span></h2>
         <div className="h-[2px] flex-grow bg-gradient-to-r from-violet-600/50 via-white/5 to-transparent"></div>
         <div className="hidden sm:block text-[9px] font-black text-slate-500 uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full border border-white/5">
-          Neural-Engine: Gemini-3.0-Flash
+          Neural-Engine: Puter.AI
         </div>
       </div>
 
@@ -52,18 +52,82 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-8">
-            {type === AnalysisType.YOUTUBE && result.thumbnailUrl && (
-              <div className="glass rounded-[2.5rem] p-3 border border-white/10 overflow-hidden shadow-2xl relative">
-                <img src={result.thumbnailUrl} className="w-full aspect-video object-cover rounded-[1.8rem] opacity-90" alt="Video Feed" />
-                <div className="absolute top-8 left-8 px-4 py-1.5 bg-black/80 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">Video Buffer Feed</div>
+            
+            {/* VIDEO IDENTITY SECTION */}
+            {type === AnalysisType.YOUTUBE && (
+              <div className="glass rounded-[2.5rem] p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+                <div className="absolute -right-20 -top-20 w-64 h-64 bg-violet-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+                
+                {result.thumbnailUrl && (
+                  <div className="mb-10 relative group">
+                    <img src={result.thumbnailUrl} className="w-full aspect-video object-cover rounded-[1.8rem] border border-white/5 shadow-2xl transition-transform group-hover:scale-[1.01]" alt="Video Thumbnail" />
+                    <div className="absolute top-6 left-6 px-4 py-2 bg-black/80 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10 flex items-center gap-2">
+                       <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                       Video Buffer Frame
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-6">
+                  <div>
+                    <span className="text-[10px] font-black text-violet-500 uppercase tracking-widest mb-2 block">Identified Title</span>
+                    <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight leading-tight">{result.title}</h1>
+                  </div>
+
+                  {result.tags && result.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 py-4">
+                      {result.tags.map((tag, i) => (
+                        <span key={i} className="px-3 py-1 bg-white/5 border border-white/5 rounded-lg text-[9px] font-bold text-slate-400 uppercase tracking-wider hover:border-violet-500/30 hover:text-white transition-all">
+                          #{tag.replace(/\s+/g, '')}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="p-6 bg-black/40 rounded-2xl border border-white/5">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 block">Neural Metadata Description</span>
+                    <p className="text-sm text-slate-400 leading-relaxed font-mono line-clamp-4 hover:line-clamp-none transition-all cursor-pointer">
+                      {result.description}
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
+            {/* THUMBNAIL AUDIT SECTION */}
+            {type === AnalysisType.YOUTUBE && result.thumbnailReview && (
+              <div className="glass p-12 rounded-[2.5rem] border border-cyan-500/20 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-10 text-cyan-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg>
+                </div>
+                <h3 className="text-2xl font-black mb-8 flex items-center gap-4 uppercase tracking-tighter text-cyan-400">
+                  <span className="w-1.5 h-7 bg-cyan-500 rounded-full shadow-[0_0_12px_rgba(6,182,212,0.4)]"></span>
+                  Thumbnail Visual Audit
+                </h3>
+                <div className="prose prose-invert max-w-none">
+                   <p className="text-slate-300 leading-relaxed italic border-l-4 border-cyan-500/30 pl-6 text-lg">
+                      "{result.thumbnailReview}"
+                   </p>
+                </div>
+                <div className="mt-8 flex gap-4">
+                   <div className="px-6 py-4 bg-cyan-500/5 border border-cyan-500/10 rounded-2xl flex-1">
+                      <span className="text-[8px] font-black uppercase text-cyan-500 block mb-1">Color Palette</span>
+                      <p className="text-[11px] font-bold text-slate-400 uppercase">Optimized for Platform Dark Mode</p>
+                   </div>
+                   <div className="px-6 py-4 bg-cyan-500/5 border border-cyan-500/10 rounded-2xl flex-1">
+                      <span className="text-[8px] font-black uppercase text-cyan-500 block mb-1">Composition</span>
+                      <p className="text-[11px] font-bold text-slate-400 uppercase">Focal Point Efficiency: High</p>
+                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUMMARY SECTION */}
             <div className="glass p-12 rounded-[2.5rem] border border-white/10 relative overflow-hidden shadow-xl">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-black flex items-center gap-4 uppercase tracking-tighter">
                   <span className="w-1.5 h-7 bg-violet-500 rounded-full shadow-[0_0_12px_rgba(139,92,246,0.4)]"></span>
-                  {type === AnalysisType.PDF_REFINE ? 'Refined Output' : 'Core Synopsis'}
+                  {type === AnalysisType.PDF_REFINE ? 'Refined Output' : 'Neural Synopsis'}
                 </h3>
                 {type === AnalysisType.PDF_REFINE && (
                   <button 
@@ -79,11 +143,12 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
               </div>
             </div>
             
+            {/* OPTIMIZATIONS SECTION */}
             {result.improvements && result.improvements.length > 0 && (
               <div className="glass p-12 rounded-[2.5rem] border border-white/10 shadow-xl">
                 <h3 className="text-2xl font-black mb-8 flex items-center gap-4 uppercase tracking-tighter">
                   <span className="w-1.5 h-7 bg-emerald-500 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.4)]"></span>
-                  Optimizations
+                  Strategic Optimizations
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {result.improvements.map((imp, i) => (
@@ -105,8 +170,8 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
               <ScoreBadge label="Neural IQ" score={result.scores?.overall ?? 0} color="violet" />
             </div>
 
-            <div className="glass p-10 rounded-[2.5rem] border border-violet-500/10 bg-violet-600/5">
-              <h4 className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-8 text-center">Neural Tips</h4>
+            <div className="glass p-10 rounded-[2.5rem] border border-violet-500/10 bg-violet-600/5 sticky top-24">
+              <h4 className="text-[10px] font-black text-violet-400 uppercase tracking-widest mb-8 text-center">Neural Tips Archive</h4>
               <div className="space-y-6">
                 {Object.entries(result.tips || {}).map(([key, value]) => (
                   value && (

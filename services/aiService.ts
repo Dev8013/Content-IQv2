@@ -16,9 +16,6 @@ export const analyzeContent = async (
 ): Promise<AnalysisResult> => {
   
   if (type === AnalysisType.IMAGE_GEN) {
-    // Puter AI currently focuses on text, but we can simulate image prompt generation
-    // and use an external placeholder for this specific gaming vibe, 
-    // or tell Puter to describe the image generation process.
     const prompt = `Act as an AI image generator. Describe in extreme detail a high-quality thumbnail image for: ${input}. Your response should be a JSON object matching this schema: { "summary": "Detailed description of the image", "scores": {"clarity": 100, "engagement": 100, "originality": 100, "structure": 100, "overall": 100}, "improvements": [], "tips": {"content": "Use neon lighting"} }`;
     const response = await puter.ai.chat(prompt);
     const result = JSON.parse(response.toString().replace(/```json|```/g, ''));
@@ -26,13 +23,24 @@ export const analyzeContent = async (
     return result;
   }
 
-  const systemPrompt = `You are Content IQ, a world-class strategist. Analyze the provided content. 
+  const youtubeSpecific = type === AnalysisType.YOUTUBE ? `
+    Additionally, for this YouTube Audit:
+    1. Critically analyze the likely visual impact of the thumbnail (based on typical trends for this video topic).
+    2. Provide a 'thumbnailReview' field (150 words) specifically critiquing composition, color theory, and Click-Through Rate (CTR) potential.
+    3. Generate a likely high-SEO 'description' and a list of 10 relevant 'tags'.
+  ` : '';
+
+  const systemPrompt = `You are Content IQ, a world-class strategist and neural analyzer. 
+  Analyze the provided content. 
   Type: ${type}. Instructions: ${instructions}. 
+  ${youtubeSpecific}
   Return ONLY a valid JSON object with this exact structure:
   {
-    "title": "A catchy title",
-    "summary": "Deep analysis/synopsis",
-    "tags": ["tag1", "tag2"],
+    "title": "A high-performing title",
+    "summary": "Comprehensive deep analysis/synopsis",
+    "description": "Optimized metadata description",
+    "thumbnailReview": "Visual audit of the thumbnail effectiveness",
+    "tags": ["tag1", "tag2", "..."],
     "scores": {"clarity": 85, "engagement": 90, "originality": 70, "structure": 80, "overall": 82},
     "improvements": ["Advise 1", "Advise 2"],
     "tips": {"thumbnails": "...", "titles": "...", "content": "..."}

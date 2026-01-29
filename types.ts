@@ -22,6 +22,7 @@ export interface AnalysisResult {
   description?: string;
   thumbnailUrl?: string;
   generatedImageUrl?: string;
+  thumbnailReview?: string;
   tags?: string[];
   scores: {
     clarity: number;
