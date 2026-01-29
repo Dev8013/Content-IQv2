@@ -77,8 +77,25 @@ const App: React.FC = () => {
     
     if (user.isLoggedIn) {
       setIsSyncing(true);
-      await PuterStorageService.saveHistory(newHistory);
-      setIsSyncing(false);
+      try {
+        await PuterStorageService.saveHistory(newHistory);
+      } finally {
+        setIsSyncing(false);
+      }
+    }
+  };
+
+  const deleteHistoryItem = async (id: string) => {
+    const newHistory = history.filter(item => item.id !== id);
+    setHistory(newHistory);
+    
+    if (user.isLoggedIn) {
+      setIsSyncing(true);
+      try {
+        await PuterStorageService.saveHistory(newHistory);
+      } finally {
+        setIsSyncing(false);
+      }
     }
   };
 
@@ -154,9 +171,10 @@ const App: React.FC = () => {
             <Analyzer 
               key={`analyzer-${resetCounter}`}
               onResultSaved={saveToHistory} 
+              onDeleteItem={deleteHistoryItem}
               history={history} 
               onClearHistory={async () => {
-                if (confirm('Are you sure you want to purge the neural archive?')) {
+                if (confirm('Are you sure you want to purge the entire neural archive? This cannot be undone.')) {
                   setHistory([]);
                   await PuterStorageService.clearHistory();
                 }
