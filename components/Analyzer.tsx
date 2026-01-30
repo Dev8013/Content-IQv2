@@ -82,7 +82,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start">
       <div className="xl:col-span-8 space-y-8">
-        {/* Improved Tab Section */}
+        {/* Tab Section */}
         <div className="relative group">
           <div className="absolute inset-0 bg-violet-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
           <div className="glass p-1.5 rounded-[2.5rem] flex dark:bg-slate-900/40 bg-white/40 border dark:border-white/10 border-slate-200 overflow-x-auto scrollbar-hide shadow-2xl relative z-10">
@@ -112,10 +112,6 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                 <span className="relative z-10 whitespace-nowrap">{tab.label}</span>
               </button>
             ))}
-          </div>
-          {/* Mobile Scroll Indicators */}
-          <div className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center dark:text-slate-500 text-slate-400 pointer-events-none animate-pulse opacity-50">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m9 18 6-6-6-6"/></svg>
           </div>
         </div>
 
@@ -211,13 +207,13 @@ const Analyzer: React.FC<AnalyzerProps> = ({
            <div className="flex items-center justify-between mb-10 pb-4">
               <h3 className="text-xs font-extrabold uppercase tracking-[0.3em] text-violet-500 flex items-center gap-4">
                  <div className="w-2 h-2 bg-violet-500 rounded-full shadow-[0_0_12px_rgba(139,92,246,0.6)]"></div>
-                 My Archive
+                 User Archive
               </h3>
               <button 
                 onClick={onClearHistory}
                 className="text-[10px] font-bold dark:text-slate-600 text-slate-400 hover:text-red-500 uppercase tracking-widest transition-colors"
               >
-                Purge All
+                Clear All
               </button>
            </div>
 
@@ -225,7 +221,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
               {history.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 dark:opacity-10 opacity-20 text-center grayscale transition-opacity">
                   <span className="text-6xl mb-6">🗄️</span>
-                  <p className="text-xs font-bold uppercase tracking-widest">Personal Cloud is Empty</p>
+                  <p className="text-xs font-bold uppercase tracking-widest">Neural Cache Empty</p>
                 </div>
               ) : history.map((item) => (
                 <div 
@@ -245,18 +241,17 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                         </span>
                       )}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-grow">
                       <p className="text-xs font-bold dark:text-white text-slate-800 uppercase truncate mb-1 group-hover:text-violet-500 transition-colors">{item.title}</p>
-                      <div className="flex items-center gap-3">
-                        <span className="text-[8px] dark:bg-white/5 bg-slate-100 px-2.5 py-1 rounded-lg dark:text-slate-500 text-slate-400 uppercase font-extrabold tracking-widest">{item.type.replace('_', ' ')}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[7px] bg-violet-500/10 text-violet-500 px-1.5 py-0.5 rounded border border-violet-500/10 uppercase font-extrabold tracking-widest">CLOUD</span>
                         <p className="text-[9px] font-bold dark:text-slate-600 text-slate-400 uppercase tracking-widest font-mono">
-                           {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                           {new Date(item.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Individual Delete Action */}
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
@@ -267,18 +262,18 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                     className="p-3 rounded-xl opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-slate-500 hover:text-red-500 transition-all active:scale-90"
                     title="Delete record from cloud"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                   </button>
                 </div>
               ))}
            </div>
            
-           <div className="mt-12 pt-8 border-t dark:border-white/5 border-slate-100 flex flex-col items-center gap-3">
-              <p className="text-[10px] font-bold dark:text-slate-600 text-slate-400 uppercase tracking-[0.2em]">Puter Secure KV Storage</p>
-              <div className="flex items-center gap-2.5 text-violet-500/60 font-extrabold text-[10px] uppercase tracking-widest bg-violet-500/5 px-4 py-2 rounded-xl">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/></svg>
-                user_private_kv
+           <div className="mt-8 pt-6 border-t dark:border-white/5 border-slate-100 flex flex-col items-center gap-3">
+              <div className="flex items-center gap-2.5 text-violet-500/60 font-extrabold text-[9px] uppercase tracking-widest bg-violet-500/5 px-4 py-2 rounded-xl border border-violet-500/10 w-full justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/></svg>
+                Stored in content_iq_history_v2
               </div>
+              <p className="text-[8px] font-bold dark:text-slate-700 text-slate-400 uppercase tracking-[0.2em]">Puter KV Protocol v2.0</p>
            </div>
         </div>
       </div>

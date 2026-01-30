@@ -1,4 +1,5 @@
 
+// Add missing React import to resolve namespace error
 import React, { useState, useEffect, useCallback } from 'react';
 import { AnalysisType, HistoryItem, User } from './types';
 import Header from './components/Header';
@@ -45,14 +46,16 @@ const App: React.FC = () => {
   }, [isDarkMode]);
 
   const syncFromPuter = async () => {
+    if (!await puter.auth.isSignedIn()) return;
     setIsSyncing(true);
     try {
       const data = await PuterStorageService.getHistory();
-      setHistory(data);
+      // Ensure data is sorted by timestamp descending
+      setHistory(data.sort((a: HistoryItem, b: HistoryItem) => b.timestamp - a.timestamp));
     } catch (e) {
       console.warn("Puter Cloud sync error:", e);
     } finally {
-      setIsSyncing(false);
+      setTimeout(() => setIsSyncing(false), 800);
     }
   };
 
@@ -80,7 +83,7 @@ const App: React.FC = () => {
       try {
         await PuterStorageService.saveHistory(newHistory);
       } finally {
-        setIsSyncing(false);
+        setTimeout(() => setIsSyncing(false), 500);
       }
     }
   };
@@ -94,7 +97,7 @@ const App: React.FC = () => {
       try {
         await PuterStorageService.saveHistory(newHistory);
       } finally {
-        setIsSyncing(false);
+        setTimeout(() => setIsSyncing(false), 500);
       }
     }
   };
@@ -155,16 +158,26 @@ const App: React.FC = () => {
                 <div className="flex items-center gap-3 mt-4">
                   <div className={`w-2.5 h-2.5 rounded-full ${isSyncing ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]'}`}></div>
                   <span className="text-xs font-semibold dark:text-slate-400 text-slate-500 uppercase tracking-widest">
-                    {isSyncing ? 'Synchronizing Cloud Buffer...' : 'Puter Cloud Link: Secure'}
+                    {isSyncing ? 'Syncing Puter Storage...' : 'Puter Cloud Link: Verified & Secure'}
                   </span>
                 </div>
               </div>
               
               <div className="flex gap-4 animate-in fade-in slide-in-from-right-4 duration-700">
-                 <div className="px-8 py-4 glass rounded-[2rem] flex flex-col items-center min-w-[140px]">
-                    <span className="text-[10px] font-bold dark:text-slate-500 text-slate-400 uppercase tracking-widest mb-1">Cache Utilization</span>
-                    <span className="text-2xl font-heading font-extrabold dark:text-white text-slate-900">{history.length} <span className="text-sm text-slate-400 font-medium">/ 50</span></span>
+                 <div className="px-8 py-4 glass rounded-[2rem] flex flex-col items-center min-w-[160px] border dark:border-white/5 border-slate-200">
+                    <span className="text-[10px] font-bold dark:text-slate-500 text-slate-400 uppercase tracking-widest mb-1">Cloud Capacity</span>
+                    <span className="text-2xl font-heading font-extrabold dark:text-white text-slate-900">
+                      {history.length} <span className="text-xs text-slate-400 font-medium uppercase ml-1">Packets</span>
+                    </span>
                  </div>
+                 <button 
+                  onClick={syncFromPuter}
+                  disabled={isSyncing}
+                  className="w-14 h-14 glass rounded-2xl flex items-center justify-center dark:text-slate-500 text-slate-400 hover:text-violet-500 hover:border-violet-500/30 transition-all border dark:border-white/5 border-slate-200 self-center"
+                  title="Force Cloud Refresh"
+                 >
+                   <svg className={isSyncing ? 'animate-spin' : ''} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                 </button>
               </div>
             </div>
 

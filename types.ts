@@ -24,6 +24,7 @@ export interface AnalysisResult {
   generatedImageUrl?: string;
   thumbnailReview?: string;
   tags?: string[];
+  sources?: { title: string; uri: string }[];
   scores: {
     clarity: number;
     engagement: number;

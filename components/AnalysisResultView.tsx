@@ -202,6 +202,35 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
                 </div>
               </div>
             )}
+
+            {/* NEURAL SOURCES (Mandatory Google Search Display) */}
+            {result.sources && result.sources.length > 0 && (
+              <div className="glass p-12 rounded-[3rem] shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <h3 className="text-2xl font-heading font-extrabold mb-10 flex items-center gap-4 uppercase tracking-tight text-blue-500">
+                  <span className="w-1.5 h-8 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.3)]"></span>
+                  Neural Grounding Sources
+                </h3>
+                <div className="space-y-4">
+                  {result.sources.map((src, i) => (
+                    <a 
+                      key={i} 
+                      href={src.uri} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-6 dark:bg-white/5 bg-slate-50 rounded-2xl border dark:border-white/5 border-slate-200 hover:border-blue-500/30 transition-all group shadow-sm"
+                    >
+                      <div className="flex items-center gap-4 overflow-hidden">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        </div>
+                        <span className="text-sm font-bold dark:text-slate-300 text-slate-600 truncate">{src.title}</span>
+                      </div>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-slate-400 group-hover:text-blue-500 transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-4 space-y-10">

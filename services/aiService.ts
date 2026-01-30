@@ -13,6 +13,7 @@ export const analyzeContent = async (
   input: string | { data: string; mimeType: string },
   instructions: string = ""
 ): Promise<AnalysisResult> => {
+  // Always initialize with process.env.API_KEY
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   // REAL IMAGE GENERATION
@@ -28,6 +29,7 @@ export const analyzeContent = async (
     });
     
     let imageUrl = "";
+    // Iterating through parts to find image data as recommended
     for (const part of response.candidates[0].content.parts) {
       if (part.inlineData) {
         imageUrl = `data:image/png;base64,${part.inlineData.data}`;
@@ -111,12 +113,14 @@ export const analyzeContent = async (
     : `Analyze: ${input}. Instructions: ${taskInstruction}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    // Upgraded to gemini-3-pro-preview for advanced reasoning tasks as per guidelines
+    model: "gemini-3-pro-preview",
     contents: contents,
     config: {
       systemInstruction: systemInstructions,
       responseMimeType: "application/json",
       responseSchema: schema,
+      // Mandatory: googleSearch tool usage for YouTube audits
       tools: type === AnalysisType.YOUTUBE ? [{ googleSearch: {} }] : []
     }
   });
@@ -127,6 +131,16 @@ export const analyzeContent = async (
     if (type === AnalysisType.YOUTUBE && typeof input === 'string') {
       const videoId = extractYoutubeId(input);
       if (videoId) result.thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    }
+
+    // Mandatory: Extracting URLs from groundingChunks when Google Search is used
+    if (response.candidates?.[0]?.groundingMetadata?.groundingChunks) {
+      result.sources = response.candidates[0].groundingMetadata.groundingChunks
+        .filter((chunk: any) => chunk.web)
+        .map((chunk: any) => ({ 
+          title: chunk.web.title || 'Source', 
+          uri: chunk.web.uri 
+        }));
     }
 
     return result;
