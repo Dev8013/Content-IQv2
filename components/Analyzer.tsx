@@ -82,28 +82,41 @@ const Analyzer: React.FC<AnalyzerProps> = ({
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 items-start">
       <div className="xl:col-span-8 space-y-8">
-        <div className="glass p-2 rounded-3xl flex dark:border-white/5 border-slate-200 overflow-x-auto scrollbar-hide shadow-lg">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => { 
-                setType(tab.id as AnalysisType); 
-                setFile(null); 
-                setInput(''); 
-                setInstructions(''); 
-                setResult(null); 
-                setError('');
-              }}
-              className={`flex-1 min-w-[150px] py-4 rounded-2xl font-bold uppercase text-[10px] tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
-                type === tab.id 
-                  ? 'bg-violet-600 text-white shadow-xl shadow-violet-600/30 scale-[1.02]' 
-                  : 'hover:bg-slate-500/5 dark:text-slate-500 text-slate-400'
-              }`}
-            >
-              <span className="text-lg">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
+        {/* Improved Tab Section */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-violet-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+          <div className="glass p-1.5 rounded-[2.5rem] flex dark:bg-slate-900/40 bg-white/40 border dark:border-white/10 border-slate-200 overflow-x-auto scrollbar-hide shadow-2xl relative z-10">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => { 
+                  setType(tab.id as AnalysisType); 
+                  setFile(null); 
+                  setInput(''); 
+                  setInstructions(''); 
+                  setResult(null); 
+                  setError('');
+                }}
+                className={`flex-1 min-w-[140px] md:min-w-[160px] py-4 rounded-[2rem] font-bold uppercase text-[10px] tracking-[0.25em] transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden ${
+                  type === tab.id 
+                    ? 'text-white bg-violet-600 shadow-[0_8px_20px_rgba(139,92,246,0.4)] z-20' 
+                    : 'dark:text-slate-500 text-slate-400 hover:text-slate-300 hover:dark:bg-white/5 hover:bg-black/5'
+                }`}
+              >
+                {type === tab.id && (
+                  <div className="absolute inset-0 bg-gradient-to-tr from-violet-600 via-indigo-500 to-purple-600 opacity-100 transition-opacity duration-500"></div>
+                )}
+                <span className={`text-xl relative z-10 ${type === tab.id ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]' : ''} transition-transform duration-300`}>
+                  {tab.icon}
+                </span>
+                <span className="relative z-10 whitespace-nowrap">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+          {/* Mobile Scroll Indicators */}
+          <div className="md:hidden absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center dark:text-slate-500 text-slate-400 pointer-events-none animate-pulse opacity-50">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
         </div>
 
         <div className="glass p-10 md:p-12 rounded-[3.5rem] border dark:border-white/10 border-slate-200 shadow-2xl relative overflow-hidden">
