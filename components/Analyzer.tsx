@@ -48,7 +48,9 @@ const Analyzer: React.FC<AnalyzerProps> = ({
         id: Math.random().toString(36).substring(7),
         type,
         timestamp: Date.now(),
-        title: type === AnalysisType.IMAGE_GEN ? `Art: ${input.substring(0, 15)}...` : res.title || `Scan ${new Date().toLocaleTimeString()}`,
+        title: type === AnalysisType.IMAGE_GEN ? `Art: ${input.substring(0, 15)}...` : 
+               type === AnalysisType.RESUME ? `Resume Match: ${file?.name}` :
+               res.title || `Scan ${new Date().toLocaleTimeString()}`,
         thumbnail: res.thumbnailUrl || res.generatedImageUrl,
         result: res
       });
@@ -71,9 +73,10 @@ const Analyzer: React.FC<AnalyzerProps> = ({
 
   const tabs = [
     { id: AnalysisType.YOUTUBE, label: 'YouTube Audit', icon: '📺' },
+    { id: AnalysisType.RESUME, label: 'Resume Match', icon: '💼' },
     { id: AnalysisType.IMAGE_GEN, label: 'Neural Art', icon: '🎨' },
     { id: AnalysisType.PDF_REFINE, label: 'Doc Refiner', icon: '🪄' },
-    { id: AnalysisType.PDF, label: 'Analysis', icon: '📄' }
+    { id: AnalysisType.PDF, label: 'General Analysis', icon: '📄' }
   ];
 
   return (
@@ -140,18 +143,22 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                 <div className="w-20 h-20 bg-violet-600/10 rounded-3xl flex items-center justify-center mx-auto mb-8 text-violet-500 group-hover:scale-110 transition-transform shadow-sm">
                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                 </div>
-                <p className="font-heading font-extrabold text-xl dark:text-white text-slate-900">{file ? file.name : 'Ingest Source Document'}</p>
+                <p className="font-heading font-extrabold text-xl dark:text-white text-slate-900">{file ? file.name : `Ingest ${type === AnalysisType.RESUME ? 'Resume PDF' : 'Source Document'}`}</p>
                 <p className="text-[10px] dark:text-slate-500 text-slate-400 uppercase mt-4 font-bold tracking-[0.25em]">Buffer: PDF / DOCX / TXT</p>
               </div>
             )}
 
-            {type === AnalysisType.PDF_REFINE && (
+            {(type === AnalysisType.PDF_REFINE || type === AnalysisType.RESUME) && (
               <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
-                <label className="text-xs font-bold dark:text-slate-500 text-slate-400 uppercase tracking-widest block ml-1">Neural Refinement Instructions</label>
+                <label className="text-xs font-bold dark:text-slate-500 text-slate-400 uppercase tracking-widest block ml-1">
+                  {type === AnalysisType.RESUME ? 'Target Job Description & Requirements' : 'Neural Refinement Instructions'}
+                </label>
                 <textarea
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
-                  placeholder="EX: Rewrite in a formal technical tone, summarize into key strategic bullets, or translate to another dialect..."
+                  placeholder={type === AnalysisType.RESUME 
+                    ? "Paste the Job Description and key Tech Stack requirements here to match against your resume..."
+                    : "EX: Rewrite in a formal technical tone, summarize into key strategic bullets, or translate to another dialect..."}
                   className="w-full dark:bg-black/30 bg-slate-50 border dark:border-white/10 border-slate-200 rounded-[2rem] px-8 py-7 focus:outline-none focus:border-violet-500/50 font-mono text-sm h-40 resize-none shadow-inner transition-all hover:border-violet-500/30"
                 />
               </div>
@@ -177,7 +184,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                  <svg className="animate-spin h-6 w-6 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                  Processing Neural Matrix...
               </div>
-            ) : 'Initiate Analysis'}
+            ) : type === AnalysisType.RESUME ? 'Audit Resume' : 'Initiate Analysis'}
           </button>
         </div>
 
@@ -221,7 +228,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                         <img src={item.thumbnail} className="w-full h-full object-cover dark:opacity-60 opacity-80 group-hover:opacity-100 transition-opacity" />
                       ) : (
                         <span className="text-2xl dark:opacity-40 opacity-60 group-hover:opacity-100 transition-opacity">
-                          {item.type === AnalysisType.YOUTUBE ? '📺' : '📄'}
+                          {item.type === AnalysisType.YOUTUBE ? '📺' : item.type === AnalysisType.RESUME ? '💼' : '📄'}
                         </span>
                       )}
                     </div>

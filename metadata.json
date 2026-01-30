@@ -1,6 +1,6 @@
 {
   "name": "Content IQ",
-  "description": "An AI-powered content analysis suite for YouTube videos, PDFs, and resumes with a high-performance gaming aesthetic.",
+  "description": "An AI-powered content analysis suite for YouTube videos, digital art, and documents.",
   "requestFramePermissions": [
     "camera",
     "microphone"

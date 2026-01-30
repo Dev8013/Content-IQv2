@@ -67,12 +67,12 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8 space-y-12">
             
-            {/* VIDEO METADATA SECTION */}
-            {type === AnalysisType.YOUTUBE && (
+            {/* METADATA SECTION */}
+            {(type === AnalysisType.YOUTUBE || type === AnalysisType.RESUME) && (
               <div className="glass rounded-[3rem] p-10 shadow-2xl relative overflow-hidden">
                 <div className="absolute -right-20 -top-20 w-80 h-80 bg-violet-500/5 blur-[100px] rounded-full pointer-events-none"></div>
                 
-                {result.thumbnailUrl && (
+                {type === AnalysisType.YOUTUBE && result.thumbnailUrl && (
                   <div className="mb-12 relative group overflow-hidden rounded-[2.2rem] shadow-2xl">
                     <img src={result.thumbnailUrl} className="w-full aspect-video object-cover transition-transform duration-700 group-hover:scale-105" alt="Video Feed" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
@@ -85,7 +85,9 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
 
                 <div className="space-y-10">
                   <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-                    <span className="text-xs font-bold text-violet-500 uppercase tracking-[0.2em] mb-3 block">Neural Title Extraction</span>
+                    <span className="text-xs font-bold text-violet-500 uppercase tracking-[0.2em] mb-3 block">
+                      {type === AnalysisType.RESUME ? 'Neural Candidate Identification' : 'Neural Title Extraction'}
+                    </span>
                     <h1 className="text-3xl md:text-5xl font-heading font-extrabold tracking-tight dark:text-white text-slate-900 leading-tight">
                       {result.title}
                     </h1>
@@ -93,7 +95,9 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
 
                   <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
                     <div className="flex items-center justify-between mb-5">
-                      <span className="text-xs font-bold text-violet-500 uppercase tracking-[0.2em] block">Optimization Tags</span>
+                      <span className="text-xs font-bold text-violet-500 uppercase tracking-[0.2em] block">
+                        {type === AnalysisType.RESUME ? 'Target Skill Keywords' : 'Optimization Tags'}
+                      </span>
                       <button 
                         onClick={handleCopyTags}
                         className={`text-[10px] font-bold uppercase tracking-widest px-5 py-2 rounded-xl border transition-all ${
@@ -102,26 +106,28 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
                           : 'dark:bg-white/5 bg-slate-100 dark:border-white/10 border-slate-200 dark:text-slate-400 text-slate-500 hover:text-violet-500 hover:border-violet-500/30'
                         }`}
                       >
-                        {copyStatus === 'copied' ? 'Copied to Neural Cache' : 'Copy All Tags'}
+                        {copyStatus === 'copied' ? 'Copied to Neural Cache' : 'Copy All'}
                       </button>
                     </div>
                     {result.tags && result.tags.length > 0 && (
                       <div className="flex flex-wrap gap-3">
                         {result.tags.map((tag, i) => (
                           <span key={i} className="px-4 py-2 dark:bg-white/5 bg-slate-100 border dark:border-white/5 border-slate-200 rounded-xl text-[11px] font-bold dark:text-slate-400 text-slate-600 uppercase tracking-wider hover:border-violet-500/30 transition-all">
-                            #{tag.trim().replace(/\s+/g, '')}
+                            {type === AnalysisType.RESUME ? tag : `#${tag.trim().replace(/\s+/g, '')}`}
                           </span>
                         ))}
                       </div>
                     )}
                   </div>
 
-                  <div className="p-10 dark:bg-black/30 bg-slate-50 rounded-[2.2rem] border dark:border-white/5 border-slate-200 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 shadow-inner">
-                    <span className="text-xs font-bold dark:text-slate-500 text-slate-400 uppercase tracking-[0.2em] mb-5 block">Optimized SEO Description</span>
-                    <div className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-mono whitespace-pre-wrap">
-                      {result.description}
+                  {type === AnalysisType.YOUTUBE && (
+                    <div className="p-10 dark:bg-black/30 bg-slate-50 rounded-[2.2rem] border dark:border-white/5 border-slate-200 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 shadow-inner">
+                      <span className="text-xs font-bold dark:text-slate-500 text-slate-400 uppercase tracking-[0.2em] mb-5 block">Optimized SEO Description</span>
+                      <div className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-mono whitespace-pre-wrap">
+                        {result.description}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             )}
@@ -154,12 +160,13 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
               </div>
             )}
 
-            {/* SUMMARY SECTION */}
+            {/* SUMMARY / STRATEGY SECTION */}
             <div className="glass p-12 rounded-[3rem] shadow-xl relative overflow-hidden">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-heading font-extrabold flex items-center gap-4 uppercase tracking-tight dark:text-white text-slate-900">
                   <span className="w-1.5 h-8 bg-violet-500 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.3)]"></span>
-                  {type === AnalysisType.PDF_REFINE ? 'Neural Modification Data' : 'Core Strategic Synopsis'}
+                  {type === AnalysisType.PDF_REFINE ? 'Neural Modification Data' : 
+                   type === AnalysisType.RESUME ? 'ATS Optimization Strategy' : 'Core Strategic Synopsis'}
                 </h3>
                 {type === AnalysisType.PDF_REFINE && (
                   <button 
@@ -178,12 +185,12 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
               </div>
             </div>
             
-            {/* OPTIMIZATIONS SECTION */}
+            {/* ACTION POINTS / IMPROVEMENTS */}
             {result.improvements && result.improvements.length > 0 && (
               <div className="glass p-12 rounded-[3rem] shadow-xl">
                 <h3 className="text-2xl font-heading font-extrabold mb-10 flex items-center gap-4 uppercase tracking-tight text-emerald-500">
                   <span className="w-1.5 h-8 bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.3)]"></span>
-                  Strategic Action Points
+                  {type === AnalysisType.RESUME ? 'Resume Action Buffer' : 'Strategic Action Points'}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {result.improvements.map((imp, i) => (
@@ -199,9 +206,9 @@ const AnalysisResultView: React.FC<Props> = ({ result, type }) => {
 
           <div className="lg:col-span-4 space-y-10">
             <div className="grid grid-cols-2 gap-5 animate-in fade-in slide-in-from-right-4 duration-700">
-              <ScoreBadge label="Logic" score={result.scores?.clarity ?? 0} color="cyan" />
-              <ScoreBadge label="Impact" score={result.scores?.engagement ?? 0} color="emerald" />
-              <ScoreBadge label="Flow" score={result.scores?.structure ?? 0} color="purple" />
+              <ScoreBadge label={type === AnalysisType.RESUME ? "Match" : "Logic"} score={result.scores?.clarity ?? 0} color="cyan" />
+              <ScoreBadge label={type === AnalysisType.RESUME ? "ATS" : "Impact"} score={result.scores?.engagement ?? 0} color="emerald" />
+              <ScoreBadge label={type === AnalysisType.RESUME ? "Skills" : "Flow"} score={result.scores?.structure ?? 0} color="purple" />
               <ScoreBadge label="Neural IQ" score={result.scores?.overall ?? 0} color="violet" />
             </div>
 
