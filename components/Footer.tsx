@@ -3,40 +3,40 @@ import React from 'react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-black text-white py-20 px-6 mt-auto">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="bg-black text-white py-24 px-6 mt-auto border-t border-white/5">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
         <div className="col-span-1 md:col-span-1">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center text-white font-bold">IQ</div>
-            <span className="text-xl font-black">Content IQ</span>
+          <div className="flex items-center gap-2 mb-8">
+            <div className="w-10 h-10 social-gradient rounded-full flex items-center justify-center text-white font-black italic shadow-lg">IQ</div>
+            <span className="text-2xl font-black italic tracking-tighter">ContentIQ</span>
           </div>
-          <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
-            AI-powered content analysis for YouTube videos and PDFs. Get insights, scores, and actionable suggestions to grow your reach.
+          <p className="text-slate-500 text-base leading-snug max-w-xs font-bold italic">
+            Empowering the algorithm with neural content analysis. Redefining creativity through artificial intelligence.
           </p>
         </div>
 
         <div>
-          <h4 className="font-bold mb-6 text-lg">Product</h4>
-          <ul className="space-y-4 text-slate-400">
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Pricing</a></li>
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Analyze Content</a></li>
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Features</a></li>
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Tools</a></li>
+          <h4 className="font-black mb-8 text-[10px] uppercase tracking-widest text-slate-500">Studio</h4>
+          <ul className="space-y-4 text-slate-400 font-bold italic">
+            <li><a href="#" className="hover:text-social-brand transition-colors">Creative Studio</a></li>
+            <li><a href="#" className="hover:text-social-brand transition-colors">Asset Library</a></li>
+            <li><a href="#" className="hover:text-social-brand transition-colors">Neural Hub</a></li>
+            <li><a href="#" className="hover:text-social-brand transition-colors">Pricing</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="font-bold mb-6 text-lg">Company</h4>
-          <ul className="space-y-4 text-slate-400">
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Contact</a></li>
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Privacy Policy</a></li>
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Terms of Service</a></li>
-            <li><a href="#" className="hover:text-violet-500 transition-colors">Blog</a></li>
+          <h4 className="font-black mb-8 text-[10px] uppercase tracking-widest text-slate-500">System</h4>
+          <ul className="space-y-4 text-slate-400 font-bold italic">
+            <li><a href="#" className="hover:text-social-brand transition-colors">Privacy</a></li>
+            <li><a href="#" className="hover:text-social-brand transition-colors">Terms</a></li>
+            <li><a href="#" className="hover:text-social-brand transition-colors">Contact</a></li>
+            <li><a href="#" className="hover:text-social-brand transition-colors">Blog</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="font-bold mb-6 text-lg">Social</h4>
+          <h4 className="font-black mb-8 text-[10px] uppercase tracking-widest text-slate-500">Connect</h4>
           <div className="flex gap-4">
             <SocialIcon icon={<TwitterIcon />} />
             <SocialIcon icon={<LinkedinIcon />} />
@@ -45,15 +45,25 @@ const Footer: React.FC = () => {
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/10 text-center text-slate-500 text-sm">
-        © {new Date().getFullYear()} Content IQ. All rights reserved.
+      <div className="max-w-7xl mx-auto mt-24 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-slate-600 text-[10px] font-black uppercase tracking-widest gap-4">
+        <div>© {new Date().getFullYear()} Content IQ Studio. Finalized.</div>
+        <div className="flex gap-8">
+          <span className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+            Mainnet Operational
+          </span>
+          <span className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-social-brand rounded-full"></div>
+            Neural Link: Stable
+          </span>
+        </div>
       </div>
     </footer>
   );
 };
 
 const SocialIcon: React.FC<{ icon: React.ReactNode }> = ({ icon }) => (
-  <a href="#" className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center hover:bg-violet-600 transition-all text-slate-300 hover:text-white">
+  <a href="#" className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center hover:social-gradient transition-all text-slate-400 hover:text-white border border-white/5 active:scale-90">
     {icon}
   </a>
 );

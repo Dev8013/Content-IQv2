@@ -32,65 +32,74 @@
               heading: ['Outfit', 'sans-serif'],
               mono: ['JetBrains Mono', 'monospace'],
             },
+            colors: {
+              social: {
+                brand: '#FF0050', // Instagramish Red/Pink
+                youtube: '#FF0000',
+                ig: {
+                  purple: '#833ab4',
+                  pink: '#fd1d1d',
+                  orange: '#fcb045'
+                }
+              },
+              dark: {
+                bg: '#0a0a0a',
+                card: '#121212',
+                border: '#1f1f1f'
+              },
+              light: {
+                bg: '#ffffff',
+                card: '#f8f8f8',
+                border: '#efefef'
+              }
+            }
           }
         }
       }
     </script>
     <style>
         :root {
-            --transition-speed: 0.4s;
+            --transition-speed: 0.3s;
         }
         body {
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
-            transition: background-color var(--transition-speed), color var(--transition-speed);
         }
         .font-heading { font-family: 'Outfit', sans-serif; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Glassmorphism Refinement */
+        /* Modern Glass / Card Styles */
         .glass {
-            backdrop-filter: blur(12px);
-            transition: all var(--transition-speed);
+            transition: all var(--transition-speed) ease;
         }
         .dark .glass {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: #121212;
+            border: 1px solid #1f1f1f;
         }
         .light .glass {
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+            background: #ffffff;
+            border: 1px solid #efefef;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .gaming-grid {
-            background-size: 40px 40px;
-            transition: opacity var(--transition-speed);
-        }
-        .dark .gaming-grid {
-            background-image: radial-gradient(circle at 1px 1px, rgba(139, 92, 246, 0.1) 1px, transparent 0);
-        }
-        .light .gaming-grid {
-            background-image: radial-gradient(circle at 1px 1px, rgba(139, 92, 246, 0.05) 1px, transparent 0);
+        .social-gradient {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
         }
 
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
         
-        /* Soothing Glows */
-        .glow-violet {
-            filter: blur(80px);
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-        }
-
         .theme-transition * {
-          transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
+          transition: background-color var(--transition-speed) ease, 
+                      border-color var(--transition-speed) ease, 
+                      color var(--transition-speed) ease, 
+                      box-shadow var(--transition-speed) ease;
         }
     </style>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="dark bg-slate-950 text-slate-200 gaming-grid theme-transition">
+<body class="dark bg-dark-bg text-slate-200 theme-transition">
     <div id="root"></div>
 <script type="module" src="/index.tsx"></script>
 </body>
