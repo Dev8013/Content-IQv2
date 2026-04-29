@@ -23,14 +23,17 @@ const Analyzer: React.FC<AnalyzerProps> = ({
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const startAnalysis = async () => {
+  const startAnalysis = async (overriddenInput?: string, overriddenType?: AnalysisType) => {
     setIsAnalyzing(true);
     setError('');
     setResult(null);
 
+    const targetType = overriddenType || type;
+    const targetInput = overriddenInput || input;
+
     try {
-      let payload: any = input;
-      if (type === AnalysisType.PDF || type === AnalysisType.RESUME || type === AnalysisType.PDF_REFINE) {
+      let payload: any = targetInput;
+      if (targetType === AnalysisType.PDF || targetType === AnalysisType.RESUME || targetType === AnalysisType.PDF_REFINE) {
         if (!file) throw new Error('SOURCE FILE MISSING: UPLOAD REQUIRED');
         const base64Data = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -41,17 +44,17 @@ const Analyzer: React.FC<AnalyzerProps> = ({
         payload = { data: base64Data, mimeType: file.type };
       }
 
-      const res = await analyzeContent(type, payload, instructions);
+      const res = await analyzeContent(targetType, payload, instructions);
       setResult(res);
 
       onResultSaved({
         id: Math.random().toString(36).substring(7),
-        type,
+        type: targetType,
         timestamp: Date.now(),
-        title: type === AnalysisType.IMAGE_GEN ? `Art: ${input.substring(0, 15)}...` : 
-               type === AnalysisType.RESUME ? `Resume Match: ${file?.name}` :
-               res.title || `Scan ${new Date().toLocaleTimeString()}`,
-        thumbnail: res.thumbnailUrl || res.generatedImageUrl,
+        title: targetType === AnalysisType.IMAGE_GEN ? `Art: ${targetInput.substring(0, 15)}...` : 
+               targetType === AnalysisType.RESUME ? `Resume Match: ${file?.name}` :
+               res.channelMetadata?.handle || res.title || `Scan ${new Date().toLocaleTimeString()}`,
+        thumbnail: res.thumbnailUrl || res.generatedImageUrl || res.channelMetadata?.avatarUrl,
         result: res
       });
     } catch (err: any) {
@@ -59,6 +62,13 @@ const Analyzer: React.FC<AnalyzerProps> = ({
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const handleVideoClick = (videoId: string) => {
+    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    setInput(videoUrl);
+    setType(AnalysisType.YOUTUBE);
+    startAnalysis(videoUrl, AnalysisType.YOUTUBE);
   };
 
   const handleHistorySelect = (item: HistoryItem) => {
@@ -73,6 +83,9 @@ const Analyzer: React.FC<AnalyzerProps> = ({
 
   const tabs = [
     { id: AnalysisType.YOUTUBE, label: 'YouTube Audit', icon: '📺' },
+    { id: AnalysisType.COMPETITIVE_AUDIT, label: 'Competitor Audit', icon: '🕵️' },
+    { id: AnalysisType.CHANNEL_DEEP_DIVE, label: 'Channel Deep Dive', icon: '📊' },
+    { id: AnalysisType.TREND_STRATEGY, label: 'Trend Strategy', icon: '📈' },
     { id: AnalysisType.RESUME, label: 'Resume Match', icon: '💼' },
     { id: AnalysisType.IMAGE_GEN, label: 'Neural Art', icon: '🎨' },
     { id: AnalysisType.PDF_REFINE, label: 'Doc Refiner', icon: '🪄' },
@@ -124,7 +137,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
           </div>
 
           <div className="space-y-12">
-            {(type === AnalysisType.YOUTUBE || type === AnalysisType.IMAGE_GEN) ? (
+            {(type === AnalysisType.YOUTUBE || type === AnalysisType.COMPETITIVE_AUDIT || type === AnalysisType.CHANNEL_DEEP_DIVE || type === AnalysisType.TREND_STRATEGY || type === AnalysisType.IMAGE_GEN) ? (
               <div className="animate-in fade-in duration-500">
                 <label className="text-xs font-black dark:text-slate-500 text-slate-400 uppercase tracking-widest block mb-4 ml-2">Interaction Buffer</label>
                 <div className="relative group">
@@ -132,7 +145,13 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={type === AnalysisType.YOUTUBE ? "Paste YouTube Video Link..." : "Describe the vibe for neural generation..."}
+                    placeholder={
+                      type === AnalysisType.YOUTUBE ? "Paste YouTube Video Link..." : 
+                      type === AnalysisType.COMPETITIVE_AUDIT ? "Channel Handle or Competitor Video Link..." :
+                      type === AnalysisType.CHANNEL_DEEP_DIVE ? "Enter @ChannelHandle (e.g., @MrBeast)..." :
+                      type === AnalysisType.TREND_STRATEGY ? "Niche (e.g., Tech, Cooking, Gaming)..." :
+                      "Describe the vibe for neural generation..."
+                    }
                     className="w-full dark:bg-black/30 bg-slate-50 border dark:border-white/10 border-slate-200 rounded-full px-10 py-8 focus:outline-none focus:border-social-brand/50 font-bold text-lg transition-all focus:bg-white dark:focus:bg-black/50 shadow-inner group-hover:border-social-brand/20"
                   />
                   <div className="absolute right-10 top-1/2 -translate-y-1/2 dark:text-slate-700 text-slate-300 pointer-events-none group-hover:text-social-brand transition-colors">
@@ -184,7 +203,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
 
           <button 
             onClick={startAnalysis}
-            disabled={isAnalyzing || (type === AnalysisType.YOUTUBE || type === AnalysisType.IMAGE_GEN ? !input : !file)}
+            disabled={isAnalyzing || ([AnalysisType.YOUTUBE, AnalysisType.COMPETITIVE_AUDIT, AnalysisType.CHANNEL_DEEP_DIVE, AnalysisType.TREND_STRATEGY, AnalysisType.IMAGE_GEN].includes(type) ? !input : !file)}
             className="w-full mt-14 py-8 social-gradient hover:opacity-90 disabled:opacity-20 text-white font-black rounded-full transition-all shadow-2xl shadow-social-brand/30 active:scale-95 flex items-center justify-center gap-6 uppercase tracking-widest text-sm"
           >
             {isAnalyzing ? (
@@ -196,7 +215,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
           </button>
         </div>
 
-        {result && <AnalysisResultView result={result} type={type} />}
+        {result && <AnalysisResultView result={result} type={type} onVideoClick={handleVideoClick} />}
       </div>
 
       <div id="history-section" className="xl:col-span-4 sticky top-28">
@@ -236,7 +255,10 @@ const Analyzer: React.FC<AnalyzerProps> = ({
                         <img src={item.thumbnail} className={`w-full h-full object-cover ${type === AnalysisType.IMAGE_GEN ? 'opacity-100' : 'dark:opacity-60 opacity-80 group-hover:opacity-100'} transition-opacity`} />
                       ) : (
                         <span className="text-3xl dark:opacity-40 opacity-60 group-hover:opacity-100 transition-opacity">
-                          {item.type === AnalysisType.YOUTUBE ? '📺' : item.type === AnalysisType.RESUME ? '💼' : '📄'}
+                          {item.type === AnalysisType.YOUTUBE ? '📺' : 
+                           item.type === AnalysisType.COMPETITIVE_AUDIT ? '🕵️' :
+                           item.type === AnalysisType.TREND_STRATEGY ? '📈' :
+                           item.type === AnalysisType.RESUME ? '💼' : '📄'}
                         </span>
                       )}
                     </div>

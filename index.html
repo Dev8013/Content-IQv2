@@ -60,41 +60,47 @@
     <style>
         :root {
             --transition-speed: 0.3s;
+            --color-social-brand: #FF0050;
         }
         body {
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
         }
         .font-heading { font-family: 'Outfit', sans-serif; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Modern Glass / Card Styles */
         .glass {
-            transition: all var(--transition-speed) ease;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
         }
         .dark .glass {
-            background: #121212;
-            border: 1px solid #1f1f1f;
+            background: #0d0d0d;
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .light .glass {
             background: #ffffff;
-            border: 1px solid #efefef;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
         }
 
         .social-gradient {
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            background: linear-gradient(135deg, #FF0050 0%, #FF0050 100%);
         }
 
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
         
-        .theme-transition * {
-          transition: background-color var(--transition-speed) ease, 
-                      border-color var(--transition-speed) ease, 
-                      color var(--transition-speed) ease, 
-                      box-shadow var(--transition-speed) ease;
+        input::placeholder {
+           color: #64748b;
+           opacity: 0.4;
+        }
+
+        .dark { background-color: #000000; color: #f8fafc; }
+        .light { background-color: #f8fafc; color: #0f172a; }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-neural {
+          animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 <link rel="stylesheet" href="/index.css">

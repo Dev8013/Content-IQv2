@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Outfit", sans-serif;
+  --color-social-brand: #FF0050;
+  --color-social-ig-purple: #833ab4;
+  --color-social-ig-orange: #f56040;
+  --color-social-ig-yellow: #fcaf45;
+  --color-dark-bg: #000000;
+  --color-light-bg: #f8fafc;
+}
+
+@layer base {
+  body {
+    @apply transition-colors duration-500;
+  }
+}
+
+.social-gradient {
+  background: linear-gradient(135deg, #FF0050 0%, #FF0050 100%);
+}
+
+.glass {
+  @apply backdrop-blur-3xl;
+}

@@ -51,6 +51,21 @@ export const analyzeContent = async (
   let taskInstruction = "";
   if (type === AnalysisType.YOUTUBE) {
     taskInstruction = "YouTube Video Audit. Extract SEO metadata, titles, and tags.";
+  } else if (type === AnalysisType.COMPETITIVE_AUDIT) {
+    taskInstruction = `Competitive Channel/Video Audit. Analyze the provided link: "${input}". 
+    Identify their SEO strategy, recurring tags, visual branding good/bad practices, and content pillars. 
+    Explain what makes them successful or where they are failing.`;
+  } else if (type === AnalysisType.CHANNEL_DEEP_DIVE) {
+    taskInstruction = `Deep Dive Channel Audit for: "${input}". 
+    1. Extract channel metadata (Banner, Avatar, Handle, Subscribers, Total Videos).
+    2. Generate a list of their latest 8 videos including thumbnails, titles, views, and relative time.
+    3. Analyze overall channel performance, subscriber growth patterns, and view distributions.
+    4. identify good/bad practices and a roadmap to hit the next major milestone.
+    5. Include view trend chart data and high-level stats (Engagement Rate, CPM estimate, etc).`;
+  } else if (type === AnalysisType.TREND_STRATEGY) {
+    taskInstruction = `Trend & Viral Content Strategy. Analyze current and past month trends for the niche: "${input || instructions}". 
+    Generate 5 long-form video ideas and 10 short-form (Shorts/Reels) ideas. 
+    Provide specific hooks, titles, and SEO keywords for each idea.`;
   } else if (type === AnalysisType.RESUME) {
     taskInstruction = `Resume Strategy Audit. Match the provided Resume PDF against the Job Description: "${instructions}". 
     Identify missing tech keywords, quantify achievements, and recommend structural changes to maximize ATS compatibility.`;
@@ -68,6 +83,7 @@ export const analyzeContent = async (
   2. For YouTube audits, generate exactly 10 high-performance tags.
   3. Ensure the 'title' is optimized for high impact/CTR.
   4. For Resume audits, 'summary' must provide a direct comparison and recommendations in bullet points.
+  5. For Channel Deep Dives and trends, ALWAYS include 'stats' (4 items) and 'chartData' (6 items for trend visualization).
   
   CURRENT TASK: ${taskInstruction}`;
 
@@ -100,7 +116,56 @@ export const analyzeContent = async (
         properties: {
           thumbnails: { type: Type.STRING },
           titles: { type: Type.STRING },
-          content: { type: Type.STRING }
+          content: { type: Type.STRING },
+          strategy: { type: Type.STRING }
+        }
+      },
+      stats: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            label: { type: Type.STRING },
+            value: { type: Type.STRING },
+            trend: { type: Type.STRING, enum: ["up", "down", "neutral"] }
+          }
+        }
+      },
+      chartData: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING, description: "Timeline point or category" },
+            value: { type: Type.NUMBER, description: "Primary metric value" },
+            secondaryValue: { type: Type.NUMBER, description: "Secondary metric value (optional)" }
+          }
+        }
+      },
+      channelVideos: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            id: { type: Type.STRING },
+            title: { type: Type.STRING },
+            thumbnail: { type: Type.STRING },
+            views: { type: Type.STRING },
+            publishedAt: { type: Type.STRING },
+            duration: { type: Type.STRING }
+          },
+          required: ["id", "title", "thumbnail", "views"]
+        }
+      },
+      channelMetadata: {
+        type: Type.OBJECT,
+        properties: {
+          bannerUrl: { type: Type.STRING },
+          avatarUrl: { type: Type.STRING },
+          subscriberCount: { type: Type.STRING },
+          videoCount: { type: Type.STRING },
+          handle: { type: Type.STRING },
+          description: { type: Type.STRING }
         }
       }
     },
@@ -120,8 +185,8 @@ export const analyzeContent = async (
       systemInstruction: systemInstructions,
       responseMimeType: "application/json",
       responseSchema: schema,
-      // Mandatory: googleSearch tool usage for YouTube audits
-      tools: type === AnalysisType.YOUTUBE ? [{ googleSearch: {} }] : []
+      // Mandatory: googleSearch tool usage for YouTube, Competitor, Channel and Trend audits
+      tools: (type === AnalysisType.YOUTUBE || type === AnalysisType.COMPETITIVE_AUDIT || type === AnalysisType.CHANNEL_DEEP_DIVE || type === AnalysisType.TREND_STRATEGY) ? [{ googleSearch: {} }] : []
     }
   });
 

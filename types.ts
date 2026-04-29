@@ -1,6 +1,9 @@
 
 export enum AnalysisType {
   YOUTUBE = 'youtube',
+  COMPETITIVE_AUDIT = 'competitive_audit',
+  CHANNEL_DEEP_DIVE = 'channel_deep_dive',
+  TREND_STRATEGY = 'trend_strategy',
   PDF = 'pdf',
   RESUME = 'resume',
   IMAGE_GEN = 'image_gen',
@@ -16,6 +19,15 @@ export interface HistoryItem {
   result: AnalysisResult;
 }
 
+export interface AnalysisVideo {
+  id: string;
+  title: string;
+  thumbnail: string;
+  views: string;
+  publishedAt: string;
+  duration: string;
+}
+
 export interface AnalysisResult {
   summary: string;
   title?: string;
@@ -28,7 +40,7 @@ export interface AnalysisResult {
   scores: {
     clarity: number;
     engagement: number;
-    originality: number;
+    originality?: number;
     structure: number;
     overall: number;
   };
@@ -40,6 +52,26 @@ export interface AnalysisResult {
     tags?: string;
     content?: string;
     formatting?: string;
+    strategy?: string;
+  };
+  stats?: {
+    label: string;
+    value: string | number;
+    trend?: 'up' | 'down' | 'neutral';
+  }[];
+  chartData?: {
+    name: string;
+    value: number;
+    secondaryValue?: number;
+  }[];
+  channelVideos?: AnalysisVideo[];
+  channelMetadata?: {
+    bannerUrl?: string;
+    avatarUrl?: string;
+    subscriberCount?: string;
+    videoCount?: string;
+    handle?: string;
+    description?: string;
   };
 }
 

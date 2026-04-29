@@ -26,7 +26,7 @@ const Hero: React.FC<HeroProps> = ({ onStartClick }) => {
         </h1>
         
         <p className="text-xl md:text-2xl dark:text-slate-400 text-slate-500 max-w-4xl mx-auto mb-16 leading-tight font-medium animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
-          The ultimate creator suite for viral analysis, document refinement, and visual synthesis. 
+          The ultimate creator suite for viral analysis, competitor intelligence, and trend-driven strategy. 
           Built for creators who demand high-fidelity insights and cloud-based asset archival.
         </p>
 
