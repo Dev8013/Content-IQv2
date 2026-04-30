@@ -129,7 +129,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col relative transition-colors duration-500`}>
+    <div className={`min-h-screen flex flex-col relative transition-colors duration-700 neural-grid overflow-x-hidden`}>
+      {/* Background Orbs */}
+      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-social-brand/5 blur-[120px] pointer-events-none animate-pulse"></div>
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-social-brand/10 blur-[120px] pointer-events-none animate-pulse delay-1000"></div>
+
       <Header 
         user={user} 
         onLogin={handleLogin} 

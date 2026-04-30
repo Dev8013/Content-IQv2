@@ -13,7 +13,7 @@
 
 @layer base {
   body {
-    @apply transition-colors duration-500;
+    @apply transition-colors duration-700 bg-light-bg dark:bg-dark-bg text-slate-900 dark:text-slate-100;
   }
 }
 
@@ -22,5 +22,20 @@
 }
 
 .glass {
-  @apply backdrop-blur-3xl;
+  @apply backdrop-blur-3xl bg-white/70 dark:bg-black/60;
+}
+
+/* Custom neural scanlines effect */
+.dark .neural-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.light .neural-grid {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
 }

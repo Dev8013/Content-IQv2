@@ -13,8 +13,17 @@ export const analyzeContent = async (
   input: string | { data: string; mimeType: string },
   instructions: string = ""
 ): Promise<AnalysisResult> => {
-  // Always initialize with process.env.API_KEY
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Use the recommended Gemini model for complex tasks or fall back to flash
+  const modelName = (type === AnalysisType.IMAGE_GEN) ? 'gemini-2.5-flash-image' : 'gemini-3-flash-preview';
+  
+  // Use both possible environment variable names to ensure cross-platform compatibility
+  const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("API KEY MISSING: Please ensure GEMINI_API_KEY is configured in your environment or settings.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
 
   // REAL IMAGE GENERATION
   if (type === AnalysisType.IMAGE_GEN) {
@@ -75,15 +84,19 @@ export const analyzeContent = async (
     taskInstruction = "General Document Analysis. Summarize and score structure.";
   }
 
-  const systemInstructions = `You are Content IQ, a world-class strategist and neural analyzer. 
-  Your goal is to analyze provided content and return a deep audit.
+  const systemInstructions = `You are Content IQ, a world-class YouTube strategist and channel growth engineer. 
+  Your goal is to analyze provided content and return a precise, high-impact audit.
   
-  STRICT FORMATTING RULES:
+  STRICT FORMATTING & CONTENT RULES:
   1. All descriptive fields (summary, description, thumbnailReview) MUST be a list of bullet points starting with '-'.
-  2. For YouTube audits, generate exactly 10 high-performance tags.
-  3. Ensure the 'title' is optimized for high impact/CTR.
-  4. For Resume audits, 'summary' must provide a direct comparison and recommendations in bullet points.
-  5. For Channel Deep Dives and trends, ALWAYS include 'stats' (4 items) and 'chartData' (6 items for trend visualization).
+  2. For YouTube audits, generate exactly 10 high-performance tags that target viral search intent.
+  3. Ensure the 'title' is optimized for high impact (CTR) - use power words and psychological triggers.
+  4. For CHANNEL DEEP DIVES: 
+     - Use the googleSearch tool to find REAL metadata for the provided handle (banner, avatar, sub count).
+     - Populate 'channelVideos' with the actual titles and thumbnails of the latest 8 videos from that channel.
+     - If real data is unavailable, generate EXTREMELY RELEVANT and realistic placeholders that match the creator's known niche.
+  5. For Trend audits, ALWAYS include specific 'stats' (4 items with trend markers) and 'chartData' (6 items for a month-over-month trend visualization).
+  6. Tone: Professional, analytical, and visionary. Use terms like "high-velocity node," "engagement depth," and "content algorithm alignment."
   
   CURRENT TASK: ${taskInstruction}`;
 
@@ -178,8 +191,7 @@ export const analyzeContent = async (
     : `Analyze: ${input}. Instructions: ${taskInstruction}`;
 
   const response: GenerateContentResponse = await ai.models.generateContent({
-    // Upgraded to gemini-3-pro-preview for advanced reasoning tasks as per guidelines
-    model: "gemini-3-pro-preview",
+    model: modelName,
     contents: contents,
     config: {
       systemInstruction: systemInstructions,
