@@ -229,7 +229,7 @@ const AnalysisResultView: React.FC<Props> = ({ result, type, onVideoClick }) => 
                       <div className="absolute top-0 left-0 h-1 w-full bg-emerald-500 opacity-20"></div>
                       <h4 className="text-2xl font-black mb-10 text-emerald-500 uppercase italic tracking-tighter">Milestone Growth Protocol</h4>
                       <div className="space-y-6">
-                         {result.improvements.map((imp, i) => (
+                         {result.improvements?.map((imp, i) => (
                            <div key={i} className="flex gap-6 items-start text-base font-black dark:text-slate-100 text-slate-800 italic group translate-x-0 hover:translate-x-2 transition-transform">
                               <span className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 font-black text-xs shrink-0">✓</span>
                               <p className="pt-1">{imp}</p>
@@ -379,7 +379,7 @@ const AnalysisResultView: React.FC<Props> = ({ result, type, onVideoClick }) => 
                 Action Checklist
              </h4>
              <div className="space-y-4">
-                {result.improvements.map((item, i) => (
+                {result.improvements?.map((item, i) => (
                   <div key={i} className="flex gap-4 items-start group">
                     <div className="w-6 h-6 rounded-full border border-emerald-500/30 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 transition-all group-hover:scale-110">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" className="text-emerald-500 group-hover:text-white"><polyline points="20 6 9 17 4 12"/></svg>

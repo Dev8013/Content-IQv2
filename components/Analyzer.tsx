@@ -21,29 +21,7 @@ const Analyzer: React.FC<AnalyzerProps> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState('');
-  const [apiKeySelected, setApiKeySelected] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const checkKey = async () => {
-      // @ts-ignore - aistudio is injected by platform
-      if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') {
-        // @ts-ignore
-        const hasKey = await window.aistudio.hasSelectedApiKey();
-        setApiKeySelected(hasKey);
-      }
-    };
-    checkKey();
-  }, []);
-
-  const handleOpenKeySelector = async () => {
-    // @ts-ignore
-    if (window.aistudio && typeof window.aistudio.openSelectKey === 'function') {
-      // @ts-ignore
-      await window.aistudio.openSelectKey();
-      setApiKeySelected(true); // Assume success as per guidelines to mitigate race conditions
-    }
-  };
 
   const startAnalysis = async (overriddenInput?: string, overriddenType?: AnalysisType) => {
     setIsAnalyzing(true);
@@ -124,26 +102,6 @@ const Analyzer: React.FC<AnalyzerProps> = ({
 
   return (
     <div className="space-y-16">
-      {!apiKeySelected && (
-        <div className="max-w-5xl mx-auto glass p-8 rounded-[2.5rem] border border-amber-500/20 bg-amber-500/5 flex flex-col md:flex-row items-center justify-between gap-6 animate-in slide-in-from-top-4 duration-700">
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 21-4.3-4.3"/><circle cx="11" cy="11" r="8"/><path d="m15.8 4.2 1.4 1.4"/><path d="m19.8 8.2 1.4 1.4"/></svg>
-            </div>
-            <div>
-              <h4 className="text-xl font-black italic uppercase text-amber-500 tracking-tight">AI Subsystem Offline</h4>
-              <p className="text-[10px] font-black uppercase text-amber-500/60 tracking-widest italic">Neural link requires a valid API key for data processing</p>
-            </div>
-          </div>
-          <button 
-            onClick={handleOpenKeySelector}
-            className="px-10 py-5 bg-amber-500 text-white font-black rounded-3xl shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-[10px] italic"
-          >
-            Connect AI Key
-          </button>
-        </div>
-      )}
-
       {/* Search Header Area */}
       <div className="relative group max-w-5xl mx-auto w-full">
          <div className="absolute -inset-1 bg-gradient-to-r from-social-brand via-social-ig-purple to-social-brand rounded-[4rem] blur opacity-10 group-hover:opacity-25 transition-opacity"></div>
